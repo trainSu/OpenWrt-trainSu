@@ -5,7 +5,7 @@ sed -i 's/192.168.1.1/192.168.8.1/g' package/base-files/files/bin/config_generat
 
 #Import external feeds
 #git clone https://github.com/xiaorouji/openwrt-passwall.git package/passwall
-#git clone https://github.com/rufengsuixing/luci-app-adguardhome.git package/app-adguardhome
+git clone https://github.com/rufengsuixing/luci-app-adguardhome.git package/app-adguardhome
 
 #agron_new
 cd package/lean
