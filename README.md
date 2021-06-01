@@ -1,4 +1,4 @@
-# 自用OpenWrt固件
+# 自用云编译OpenWrt固件
 
 **编译自lean源码**
 
