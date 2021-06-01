@@ -10,4 +10,4 @@
 cd package/lean
 git clone https://github.com/xiaorouji/openwrt-passwall.git
 git clone https://github.com/rufengsuixing/luci-app-adguardhome.git
-git clone https://github.com/sirpdboy/luci-app-netdata.git
+git clone https://github.com/sirpdboy/luci-app-netdata
