@@ -10,3 +10,5 @@
 cd package/lean
 git clone https://github.com/xiaorouji/openwrt-passwall.git
 git clone https://github.com/rufengsuixing/luci-app-adguardhome.git
+git clone https://github.com/jerrykuku/lua-maxminddb.git
+git clone https://github.com/jerrykuku/luci-app-vssr.git
