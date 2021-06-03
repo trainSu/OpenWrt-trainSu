@@ -1,4 +1,9 @@
 #!/bin/bash
+#=================================================
+# Description: DIY script
+# Lisence: MIT
+# Author: trainSu
+#=================================================
 
 # Uncomment a feed source
 #sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
