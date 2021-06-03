@@ -1,4 +1,9 @@
-#
+#=================================================
+# Description: Build OpenWrt using GitHub Actions
+# Lisence: MIT
+# Author: trainSu
+#=================================================
+
 name: Build OpenWrt
 
 on:
