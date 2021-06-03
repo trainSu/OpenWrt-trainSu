@@ -2,8 +2,8 @@
 name: Build OpenWrt
 
 on:
-  release:
-    types: [published]
+  repository_dispatch:
+  workflow_dispatch:
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
