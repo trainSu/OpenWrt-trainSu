@@ -11,12 +11,12 @@
 # Import external feeds
 cd package/lean
 git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git
-# git clone https://github.com/vernesong/OpenClash.git
-mkdir package/luci-app-openclash
-cd package/luci-app-openclash
-git init
-git remote add -f origin https://github.com/vernesong/OpenClash.git
-git config core.sparsecheckout true
-echo "luci-app-openclash" >> .git/info/sparse-checkout
-git pull --depth 1 origin master
-git branch --set-upstream-to=origin/master master
+git clone https://github.com/vernesong/OpenClash.git
+# mkdir package/luci-app-openclash
+# cd package/luci-app-openclash
+# git init
+# git remote add -f origin https://github.com/vernesong/OpenClash.git
+# git config core.sparsecheckout true
+# echo "luci-app-openclash" >> .git/info/sparse-checkout
+# git pull --depth 1 origin master
+# git branch --set-upstream-to=origin/master master
