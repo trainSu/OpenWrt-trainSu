@@ -28,7 +28,7 @@ jobs:
 
     steps:
     - name: 检查
-      uses: actions/checkout@v3
+      uses: Mattraks/delete-workflow-runs@main
 
     - name: 初始化环境
       env:
