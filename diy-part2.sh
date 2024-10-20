@@ -7,7 +7,3 @@
 
 # Modify default IP
 sed -i 's/192.168.1.1/192.168.8.1/g' package/base-files/files/bin/config_generate
-
-# luci-app-argon-config
-cd package/lean
-git clone https://github.com/jerrykuku/luci-app-argon-config.git
