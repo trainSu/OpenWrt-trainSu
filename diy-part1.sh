@@ -10,7 +10,7 @@
 
 # Import external feeds
 cd package/lean
-git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git
+git clone https://github.com/jerrykuku/luci-theme-argon.git
 # git clone https://github.com/vernesong/OpenClash.git
 mkdir package/luci-app-openclash
 cd package/luci-app-openclash
