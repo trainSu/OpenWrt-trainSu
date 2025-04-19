@@ -9,6 +9,7 @@
 #sed -i '$a src-git lienol https://github.com/Lienol/openwrt-package' feeds.conf.default
 
 # Import external feeds
+find ./ | grep Makefile | grep mosdns | xargs rm -f
 mkdir package/luci-app-openclash
 cd package/luci-app-openclash
 git init
