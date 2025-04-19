@@ -18,3 +18,5 @@ git config core.sparsecheckout true
 echo "luci-app-openclash" >> .git/info/sparse-checkout
 git pull --depth 1 origin master
 git branch --set-upstream-to=origin/master master
+cd
+git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
