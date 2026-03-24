@@ -60,7 +60,7 @@ jobs:
         echo "=============================================================================="
 
     - name: 检查
-      uses: actions/checkout@@v4
+      uses: actions/checkout@v4
 
     - name: 初始化环境
       env:
