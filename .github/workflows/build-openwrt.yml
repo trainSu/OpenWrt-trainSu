@@ -4,7 +4,7 @@
 # Author: trainSu
 #=================================================
 
-name: Build OpenWrt
+name: 编译 OpenWrt 固件
 
 on:
   repository_dispatch:
@@ -29,14 +29,14 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Before freeing up disk space
+    - name: 检查清理前的磁盘空间
       run: |
-        echo "Before freeing up disk space"
+        echo "检查清理前的磁盘空间"
         echo "=============================================================================="
         df -hT
         echo "=============================================================================="
 
-    - name: 清理磁盘空间
+    - name: 极限清理磁盘空间
       uses: jlumbroso/free-disk-space@main
       with:
         tool-cache: true
@@ -56,17 +56,17 @@ jobs:
         sudo mkswap /swapfile
         sudo swapon /swapfile
 
-    - name: Free up disk space complete
+    - name: 检查清理后的磁盘空间
       run: |
-        echo "Free up disk space complete"
+        echo "清理并挂载 Swap 完成"
         echo "=============================================================================="
         df -hT
         echo "=============================================================================="
 
-    - name: 检查
+    - name: 检出仓库代码
       uses: actions/checkout@v4
 
-    - name: 初始化环境
+    - name: 初始化编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
@@ -85,25 +85,25 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         sudo chown $USER:$GROUPS $GITHUB_WORKSPACE
 
-    - name: 克隆源代码
+    - name: 克隆 OpenWrt 源代码
       working-directory: ./
       run: |
         git clone --depth=1 $REPO_URL -b $REPO_BRANCH openwrt
 
-    - name: 加载自定义feeds
+    - name: 加载自定义 feeds 配置 (diy-part1.sh)
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         chmod +x $DIY_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
 
-    - name: 更新 & 安装 feeds
+    - name: 更新并安装 feeds
       working-directory: ./openwrt
       run: |
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
-    - name: 加载自定义配置
+    - name: 加载自定义配置 (diy-part2.sh)
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
@@ -111,7 +111,7 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
-    - name: 缓存 dl 文件夹
+    - name: 缓存下载的 dl 文件夹
       uses: actions/cache@v4
       with:
         path: openwrt/dl
@@ -119,7 +119,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-openwrt-dl-
 
-    - name: 下载包文件
+    - name: 下载编译所需的软件包
       id: package
       run: |
         cd openwrt
@@ -128,7 +128,7 @@ jobs:
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
-    - name: 编译固件
+    - name: 编译 OpenWrt 固件
       id: compile
       run: |
         cd openwrt
@@ -139,11 +139,11 @@ jobs:
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
-    - name: 检查空间使用情况
+    - name: 检查编译后的空间使用情况
       if: (!cancelled())
       run: df -hT
 
-    - name: 整理文件
+    - name: 整理编译输出的固件文件
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
@@ -152,14 +152,14 @@ jobs:
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
-    - name: 固件上传目录
+    - name: 上传固件到 Artifacts
       uses: actions/upload-artifact@v4
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
 
-    - name: 生成版本标记
+    - name: 生成发布版本标签
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
@@ -167,7 +167,7 @@ jobs:
         touch release.txt
         echo "status=success" >> $GITHUB_OUTPUT
 
-    - name: 上传固件以发布
+    - name: 发布固件到 Releases
       uses: softprops/action-gh-release@v2
       if: steps.tag.outputs.status == 'success' && !cancelled()
       env:
@@ -187,7 +187,7 @@ jobs:
           gh run delete "$run" || true
         done
 
-    - name: 清理旧的 Release 版本
+    - name: 清理旧的 Releases 版本
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
