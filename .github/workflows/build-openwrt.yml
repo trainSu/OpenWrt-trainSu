@@ -169,17 +169,23 @@ jobs:
         body_path: release.txt
         files: ${{ env.FIRMWARE }}/*
 
-    - name: 删除workflow runs
-      uses: Mattraks/delete-workflow-runs@v2
-      with:
-        retain_days: 1
-        keep_minimum_runs: 3
-
-    - name: 删除旧版本
-      uses: dev-drprasad/delete-older-releases@v0.3.3
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      with:
-        keep_latest: 3
-        delete_tags: true
+    - name: 清理旧的 Workflow 运行记录
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo "开始清理旧的 Workflow 运行记录..."
+        runs=$(gh run list --limit 100 --json databaseId -q '.[].databaseId' | tail -n +4)
+        for run in $runs; do
+          gh run delete "$run" || true
+        done
+
+    - name: 清理旧的 Release 版本
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo "开始清理旧的 Release 和 Tag..."
+        tags=$(gh release list --limit 100 | awk '{print $3}' | tail -n +4)
+        for tag in $tags; do
+          gh release delete "$tag" --cleanup-tag -y || true
+        done
