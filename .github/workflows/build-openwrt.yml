@@ -47,6 +47,8 @@ jobs:
         
     - name: 手动创建 Swap 虚拟内存
       run: |
+        sudo swapoff /swapfile || true
+        sudo rm -f /swapfile
         sudo fallocate -l 8G /swapfile
         sudo chmod 600 /swapfile
         sudo mkswap /swapfile
