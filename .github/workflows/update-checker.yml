@@ -1,4 +1,4 @@
-name: Update Checker
+name: 更新检查器
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
