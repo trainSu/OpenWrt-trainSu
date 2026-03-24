@@ -17,13 +17,12 @@ jobs:
     - name: 获取最新 Commit Hash
       id: getHash
       run: |
-        # 使用 ls-remote 瞬间获取最新 Hash，无需 clone 下载源码
         commitHash=$(git ls-remote $REPO_URL $REPO_BRANCH | awk '{print $1}')
         echo "commitHash=$commitHash" >> $GITHUB_OUTPUT
 
     - name: 对比 Commit Hash
       id: cacheHash
-      uses: actions/cache@v4    # 升级到 v4
+      uses: actions/cache@v44
       with:
         path: .commitHash
         key: HEAD-${{ steps.getHash.outputs.commitHash }}
@@ -35,13 +34,13 @@ jobs:
 
     - name: 触发编译工作流
       if: steps.cacheHash.outputs.cache-hit != 'true'
-      uses: peter-evans/repository-dispatch@v3    # 升级到 v3
+      uses: peter-evans/repository-dispatch@v3
       with:
         token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
         event-type: Source Code Update
 
     - name: 删除旧的运行记录
-      uses: Mattraks/delete-workflow-runs@v2    # 换用维护良好的插件
+      uses: Mattraks/delete-workflow-runs@v2
       with:
         retain_days: 1
         keep_minimum_runs: 1
