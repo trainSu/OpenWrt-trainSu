@@ -22,7 +22,7 @@ jobs:
 
     - name: 对比 Commit Hash
       id: cacheHash
-      uses: actions/cache@v44
+      uses: actions/cache@v4
       with:
         path: .commitHash
         key: HEAD-${{ steps.getHash.outputs.commitHash }}
