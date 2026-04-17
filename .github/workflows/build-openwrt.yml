@@ -88,7 +88,7 @@ jobs:
     - name: 克隆 OpenWrt 源代码
       working-directory: ./
       run: |
-        git clone --depth=1 $REPO_URL -b $REPO_BRANCH openwrt
+        git clone --depth=20 $REPO_URL -b $REPO_BRANCH openwrt
 
     - name: 加载自定义 feeds 配置 (diy-part1.sh)
       run: |
