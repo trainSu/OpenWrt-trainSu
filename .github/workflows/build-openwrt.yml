@@ -193,7 +193,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "开始清理旧的 Release 和 Tag..."
-        tags=$(gh release list --limit 100 | awk '{print $3}' | tail -n +4)
+        tags=$(gh release list --limit 100 --json tagName -q '.[].tagName' | tail -n +4)
         for tag in $tags; do
-          gh release delete "$tag" --cleanup-tag -y || true
+          if [ -n "$tag" ]; then
+            echo "正在精准爆破旧版本: $tag"
+            gh release delete "$tag" --cleanup-tag -y || true
+          fi
         done
