@@ -159,12 +159,40 @@ jobs:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
 
-    - name: 生成发布版本标签
+    - name: 生成发布版本标签与详细日志
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-        echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
-        touch release.txt
+        RELEASE_TAG=$(date +"%Y.%m.%d-%H%M")
+        BUILD_TIME=$(date +"%Y-%m-%d %H:%M")
+        KERNEL_VER=$(grep '^CONFIG_LINUX_VERSION=' openwrt/.config 2>/dev/null | cut -d'=' -f2 | tr -d '"' || echo '默认内核')
+        [ -z "$KERNEL_VER" ] && KERNEL_VER="默认内核"
+        
+        echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
+        
+        cat <<EOF > release.txt
+        🚀 **ImmortalWrt x86_64 自动编译版**
+        
+        ### 📦 固件基础信息
+        | 项目 | 内容 |
+        | :--- | :--- |
+        | 💻 编译平台 | GitHub Actions |
+        | 🖥️ 适用架构 | x86_64 |
+        | 🐧 内核版本 | ${KERNEL_VER} |
+        | 📅 编译时间 | ${BUILD_TIME} |
+        
+        ### 📝 ImmortalWrt 上游最新动态 (Top 15)
+        EOF
+        
+        git -C openwrt log -15 --pretty=format:"- %s [%h]" >> release.txt
+        
+        cat <<EOF >> release.txt
+        
+        
+        ---
+        🤖 *此固件由 GitHub Actions 全自动拉取最新源码构建*
+        EOF
+        
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: 发布固件到 Releases
@@ -184,7 +212,9 @@ jobs:
         echo "开始清理旧的 Workflow 运行记录..."
         runs=$(gh run list --limit 100 --json databaseId -q '.[].databaseId' | tail -n +4)
         for run in $runs; do
-          gh run delete "$run" || true
+          if [ -n "$run" ]; then
+            gh run delete "$run" || true
+          fi
         done
 
     - name: 清理旧的 Releases 版本
