@@ -165,8 +165,6 @@ jobs:
       run: |
         RELEASE_TAG=$(date +"%Y.%m.%d-%H%M")
         BUILD_TIME=$(date +"%Y-%m-%d %H:%M")
-        
-        # 优化点：直接从源码版本定义文件中精准提取内核版本号
         KERNEL_VER=$(grep "LINUX_VERSION:=" openwrt/include/kernel-version.mk | cut -d'=' -f2)
         [ -z "$KERNEL_VER" ] && KERNEL_VER="未知内核"
         
