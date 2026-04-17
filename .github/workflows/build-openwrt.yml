@@ -165,7 +165,7 @@ jobs:
       run: |
         RELEASE_TAG=$(date +"%Y.%m.%d-%H%M")
         BUILD_TIME=$(date +"%Y-%m-%d %H:%M")
-        KERNEL_VER=$(grep "LINUX_VERSION:=" openwrt/include/kernel-version.mk | cut -d'=' -f2)
+        KERNEL_VER=$(make -s -C openwrt val.LINUX_VERSION 2>/dev/null)
         [ -z "$KERNEL_VER" ] && KERNEL_VER="未知内核"
         
         echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
