@@ -175,7 +175,6 @@ jobs:
         COMMIT_HASH=$(git -C openwrt log -1 --pretty=format:"%h")
         echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
         
-        # 修复项 1：EOF 及内部文本必须顶格写，绝对不能有空格缩进！
         cat <<EOF > release.txt
         🚀 **ImmortalWrt x86_64 自动编译版**
         
