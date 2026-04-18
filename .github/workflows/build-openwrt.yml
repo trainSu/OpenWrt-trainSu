@@ -129,7 +129,11 @@ jobs:
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
+        ./staging_dir/host/bin/ccache -s || true
         make -j$(nproc) || make -j1 V=s
+        echo "================ ccache 命中率统计 ================"
+        ./staging_dir/host/bin/ccache -s || true
+        echo "==================================================="
         echo "status=success" >> $GITHUB_OUTPUT
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
