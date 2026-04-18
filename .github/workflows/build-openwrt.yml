@@ -149,6 +149,8 @@ jobs:
       run: |
         cd openwrt/bin/targets/*/*
         rm -rf packages
+        KERNEL_VER=$(cat *.manifest | grep "^kernel" | head -n 1 | cut -d- -f2 | tr -d ' ')
+        echo "KERNEL_VER=$KERNEL_VER" >> $GITHUB_ENV
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
@@ -165,11 +167,7 @@ jobs:
       run: |
         RELEASE_TAG=$(date +"%Y.%m.%d-%H%M")
         BUILD_TIME=$(date +"%Y-%m-%d %H:%M")
-        KERNEL_VER=$(make -s -C openwrt val.LINUX_VERSION 2>/dev/null)
-        [ -z "$KERNEL_VER" ] && KERNEL_VER="未知内核"
-        
         echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
-        
         cat <<EOF > release.txt
         🚀 **ImmortalWrt x86_64 自动编译版**
         
@@ -178,7 +176,7 @@ jobs:
         | :--- | :--- |
         | 💻 编译平台 | GitHub Actions |
         | 🖥️ 适用架构 | x86_64 |
-        | 🐧 内核版本 | ${KERNEL_VER} |
+        | 🐧 内核版本 | ${{ env.KERNEL_VER }} |
         | 📅 编译时间 | ${BUILD_TIME} |
         
         ### 📝 ImmortalWrt 上游最新动态 (Top 15)
