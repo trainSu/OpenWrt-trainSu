@@ -111,6 +111,14 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
+    - name: 开启 C/C++ 编译器缓存 (ccache)
+      uses: actions/cache@v4
+      with:
+        path: openwrt/.ccache
+        key: ${{ runner.os }}-openwrt-ccache-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-openwrt-ccache-
+
     - name: 缓存下载的 dl 文件夹
       uses: actions/cache@v4
       with:
