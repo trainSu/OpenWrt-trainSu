@@ -11,4 +11,5 @@ sed -i 's/192.168.1.1/192.168.8.1/g' package/base-files/files/bin/config_generat
 # find ./ | grep Makefile | grep mosdns | xargs rm -f
 # git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
 # 开启缓存
-./scripts/config --enable CONFIG_DEVEL --enable CONFIG_CCACHE
+sed -i -E '/^(# )?CONFIG_(DEVEL|CCACHE)(=| is)/d' .config
+echo -e "CONFIG_DEVEL=y\nCONFIG_CCACHE=y" >> .config
