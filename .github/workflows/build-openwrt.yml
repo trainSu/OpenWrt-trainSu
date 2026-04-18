@@ -167,19 +167,29 @@ jobs:
       run: |
         RELEASE_TAG=$(date +"%Y.%m.%d-%H%M")
         BUILD_TIME=$(date +"%Y-%m-%d %H:%M")
+        KERNEL_VER=${{ env.KERNEL_VER }}
+        [ -z "$KERNEL_VER" ] && KERNEL_VER="未知内核"
+        COMMIT_AUTHOR=$(git -C openwrt log -1 --pretty=format:"%an")
+        COMMIT_DATE=$(git -C openwrt log -1 --pretty=format:"%cd" --date=short)
+        COMMIT_MESSAGE=$(git -C openwrt log -1 --pretty=format:"%s")
+        COMMIT_HASH=$(git -C openwrt log -1 --pretty=format:"%h")
         echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
         cat <<EOF > release.txt
         🚀 **ImmortalWrt x86_64 自动编译版**
         
         ### 📦 固件基础信息
-        | 项目 | 内容 |
-        | :--- | :--- |
-        | 💻 编译平台 | GitHub Actions |
-        | 🖥️ 适用架构 | x86_64 |
-        | 🐧 内核版本 | ${{ env.KERNEL_VER }} |
-        | 📅 编译时间 | ${BUILD_TIME} |
+        - 💻 **编译平台**: GitHub Actions
+        - 🖥️ **适用架构**: x86_64
+        - 🐧 **内核版本**: ${KERNEL_VER}
+        - 📅 **编译时间**: ${BUILD_TIME}
         
-        ### 📝 ImmortalWrt 上游最新动态 (Top 15)
+        ### 🧊 主源码最后更新快照
+        - 👤 **提交作者**: ${COMMIT_AUTHOR}
+        - 🕒 **提交时间**: ${COMMIT_DATE}
+        - 🔖 **更新摘要**: ${COMMIT_MESSAGE}
+        - 🏷️ **代码哈希**: [${COMMIT_HASH}](${{ env.REPO_URL }}/commit/${COMMIT_HASH})
+        
+        ### 📝 上游引擎近期动态 (Top 15)
         EOF
         
         git -C openwrt log -15 --pretty=format:"- %s [%h]" >> release.txt
