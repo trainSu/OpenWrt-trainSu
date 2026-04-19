@@ -129,7 +129,6 @@ jobs:
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
-        [ -x ./staging_dir/host/bin/ccache ] && ./staging_dir/host/bin/ccache -s || true
         make -j$(nproc) || make -j1 V=s
         echo "================ ccache 命中率统计 ================"
         ./staging_dir/host/bin/ccache -s || true
