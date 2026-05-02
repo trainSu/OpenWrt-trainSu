@@ -44,7 +44,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "开始清理旧的更新检查记录..."
-        runs=$(gh run list -R ${{ github.repository }} --limit 100 --json databaseId -q '.[].databaseId' | tail -n +3)
+        runs=$(gh run list -w "${{ github.workflow }}" -R ${{ github.repository }} --limit 100 --json databaseId -q '.[].databaseId' | tail -n +3)
         for run in $runs; do
+          echo "正在删除检查器运行记录: $run"
           gh run delete "$run" -R ${{ github.repository }} || true
         done
