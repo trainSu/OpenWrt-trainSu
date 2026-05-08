@@ -98,6 +98,17 @@ jobs:
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
+    - name: 注入专属架构硬核参数
+      run: |
+        cd openwrt
+        echo "================ 开始注入专属性能参数 ================"
+        
+        sed -i '/CONFIG_TARGET_OPTIMIZATION/d' .config
+        echo 'CONFIG_TARGET_OPTIMIZATION="-O2 -pipe -march=alderlake -mtune=alderlake -mprefer-vector-width=256"' >> .config
+        sed -i '/CONFIG_TARGET_OPTIONS/d' .config
+        echo 'CONFIG_TARGET_OPTIONS="-march=alderlake"' >> .config
+        
+        echo "================ 参数注入完成 ================"
 
     - name: 开启 C/C++ 编译器缓存 (ccache)
       uses: actions/cache@v4
