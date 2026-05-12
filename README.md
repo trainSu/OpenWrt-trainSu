@@ -1,4 +1,4 @@
-# 自用云编译OpenWrt x86_64固件（N150架构专属）
+# 自用云编译OpenWrt x86_64固件
 
 **编译自ImmortalWrt源码**
 
