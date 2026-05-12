@@ -17,20 +17,22 @@ jobs:
     - name: 获取最新 Commit Hash
       id: getHash
       run: |
-        commitHash=$(git ls-remote $REPO_URL $REPO_BRANCH | awk '{print $1}')
-        echo "commitHash=$commitHash" >> $GITHUB_OUTPUT
+        git clone --depth 50 --filter=blob:none -b $REPO_BRANCH $REPO_URL repo
+        cd repo
+        pureHash=$(git log -1 --format="%H" -- target/linux/x86 target/linux/generic package include scripts toolchain Makefile feeds.conf.default)
+        echo "commitHash=$pureHash" >> $GITHUB_OUTPUT
 
     - name: 对比 Commit Hash
       id: cacheHash
       uses: actions/cache@v4
       with:
         path: .commitHash
-        key: HEAD-${{ steps.getHash.outputs.commitHash }}
+        key: X86-CORE-${{ steps.getHash.outputs.commitHash }}
 
     - name: 保存新 Commit Hash
       if: steps.cacheHash.outputs.cache-hit != 'true'
       run: |
-        echo ${{ steps.getHash.outputs.commitHash }} | tee .commitHash
+        echo ${{ steps.getHash.outputs.commitHash }} > .commitHash
 
     - name: 触发编译工作流
       if: steps.cacheHash.outputs.cache-hit != 'true'
@@ -43,9 +45,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        echo "开始清理旧的更新检查记录..."
-        runs=$(gh run list -w "${{ github.workflow }}" -R ${{ github.repository }} --limit 100 --json databaseId -q '.[].databaseId' | tail -n +3)
+        runs=$(gh run list -w "${{ github.workflow }}" -R ${{ github.repository }} --limit 100 --json databaseId -q '.[].databaseId' | tail -n +4)
         for run in $runs; do
-          echo "正在删除检查器运行记录: $run"
-          gh run delete "$run" -R ${{ github.repository }} || true
+          if [ -n "$run" ]; then
+            gh run delete "$run" -R ${{ github.repository }} || true
+          fi
         done
