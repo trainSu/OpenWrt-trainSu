@@ -103,7 +103,7 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
-    - name: 注入 N150 架构硬核参数
+    - name: 注入 N150 架构参数
       run: |
         cd openwrt
         echo "================ 开始注入 N150 专属性能参数 ================"
