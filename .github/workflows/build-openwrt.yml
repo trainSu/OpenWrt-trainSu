@@ -232,11 +232,13 @@ jobs:
       run: |
         echo "开始清理旧的 Workflow 运行记录..."
         runs=$(gh run list --limit 100 --json databaseId -q '.[].databaseId' | tail -n +4)
-        for run in $runs; do
-          if [ -n "$run" ]; then
+        if [ -n "$runs" ]; then
+          for run in $runs; do
             gh run delete "$run" || true
-          fi
-        done
+          done
+        else
+          echo "没有需要清理的旧记录。"
+        fi
 
     - name: 清理旧的 Releases 版本
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
@@ -253,4 +255,3 @@ jobs:
         else
           echo "没有需要清理的旧版本。"
         fi
-        done
