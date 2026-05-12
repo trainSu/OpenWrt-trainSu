@@ -17,7 +17,7 @@ jobs:
     - name: 获取最新 Commit Hash
       id: getHash
       run: |
-        git clone --depth 50 --filter=blob:none -b $REPO_BRANCH $REPO_URL repo
+        git clone --filter=blob:none -b $REPO_BRANCH $REPO_URL repo
         cd repo
         pureHash=$(git log -1 --format="%H" -- target/linux/x86 target/linux/generic package include scripts toolchain Makefile feeds.conf.default)
         echo "commitHash=$pureHash" >> $GITHUB_OUTPUT
