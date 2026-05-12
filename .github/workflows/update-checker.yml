@@ -46,8 +46,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         runs=$(gh run list -w "${{ github.workflow }}" -R ${{ github.repository }} --limit 100 --json databaseId -q '.[].databaseId' | tail -n +4)
-        for run in $runs; do
-          if [ -n "$run" ]; then
+        if [ -n "$runs" ]; then
+          for run in $runs; do
             gh run delete "$run" -R ${{ github.repository }} || true
-          fi
-        done
+          done
+        else
+          echo "没有需要清理的旧记录。"
+        fi
