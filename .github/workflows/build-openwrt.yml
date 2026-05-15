@@ -103,14 +103,6 @@ jobs:
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
-    - name: 开启 C/C++ 编译器缓存 (ccache)
-      uses: actions/cache@v4
-      with:
-        path: openwrt/.ccache
-        key: ${{ runner.os }}-openwrt-ccache-${{ github.run_id }}
-        restore-keys: |
-          ${{ runner.os }}-openwrt-ccache-
-
     - name: 缓存下载的 dl 文件夹
       uses: actions/cache@v4
       with:
@@ -132,11 +124,8 @@ jobs:
       id: compile
       run: |
         cd openwrt
-        echo -e "2 thread compile"
-        make -j2 || make -j1 V=s
-        echo "================ ccache 命中率统计 ================"
-        [ -x ./staging_dir/host/bin/ccache ] && CCACHE_DIR="$(pwd)/.ccache" ./staging_dir/host/bin/ccache -s || true
-        echo "==================================================="
+        echo -e "$(nproc) thread compile"
+        make -j$(nproc) || make -j1 V=s
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
