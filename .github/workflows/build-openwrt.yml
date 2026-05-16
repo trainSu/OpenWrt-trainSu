@@ -113,7 +113,7 @@ jobs:
           openwrt/staging_dir/toolchain-*
         key: ${{ runner.os }}-toolchain-${{ hashFiles('openwrt/.config', 'openwrt/include/**', 'openwrt/tools/**', 'openwrt/toolchain/**') }}
         restore-keys: |
-          ${{ runner.os }}-openwrt-toolchain-
+          ${{ runner.os }}-toolchain-
 
     - name: 下载编译所需的软件包
       id: package
