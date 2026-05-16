@@ -111,7 +111,7 @@ jobs:
         path: |
           openwrt/staging_dir/host*
           openwrt/staging_dir/toolchain-*
-        key: ${{ runner.os }}-openwrt-toolchain-${{ hashFiles('openwrt/.config') }}
+        key: ${{ runner.os }}-toolchain-${{ hashFiles('openwrt/.config', 'openwrt/include/**', 'openwrt/tools/**', 'openwrt/toolchain/**') }}
         restore-keys: |
           ${{ runner.os }}-openwrt-toolchain-
 
