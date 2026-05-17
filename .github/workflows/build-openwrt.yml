@@ -120,8 +120,8 @@ jobs:
       if: steps.cache-toolchain.outputs.cache-hit == 'true'
       run: |
         echo "正在施展时间戳欺骗魔法，骗过 OpenWrt 的 Make 系统..."
-        find openwrt/staging_dir/ -type f -exec touch {} \;
-        find openwrt/build_dir/ -type f -exec touch {} \;
+        find openwrt/staging_dir/ -type f -exec touch {} +
+        find openwrt/build_dir/ -type f -exec touch {} +
 
     - name: 下载编译所需的软件包
       id: package
