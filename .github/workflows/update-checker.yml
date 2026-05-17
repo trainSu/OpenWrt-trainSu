@@ -1,3 +1,9 @@
+#==================================================
+# Description: Check for updates and trigger build
+# License: MIT
+# Author: trainSu
+#==================================================
+
 name: 更新检查器
 
 env:
@@ -18,10 +24,11 @@ jobs:
     - name: 获取最新 Commit Hash
       id: getHash
       run: |
-        git clone --filter=blob:none -b $REPO_BRANCH $REPO_URL repo
+        git clone --filter=blob:none --bare -b $REPO_BRANCH $REPO_URL repo
         cd repo
         pureHash=$(git log -1 --format="%H" -- target/linux/x86 target/linux/generic package include scripts toolchain Makefile feeds.conf.default)
         echo "commitHash=$pureHash" >> $GITHUB_OUTPUT
+        echo "提取到的核心哈希值为: $pureHash"
 
     - name: 对比 Commit Hash
       id: cacheHash
@@ -30,22 +37,38 @@ jobs:
         path: .commitHash
         key: X86-CORE-${{ steps.getHash.outputs.commitHash }}
 
+    - name: 检查上次编译工作流是否失败
+      id: checkBuild
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        last_status=$(gh run list -w "编译 OpenWrt 固件" -R ${{ github.repository }} --limit 1 --json conclusion -q '.[0].conclusion' || echo "unknown")
+        echo "上次编译状态: $last_status"
+        
+        if [ "$last_status" != "success" ] && [ "$last_status" != "unknown" ]; then
+          echo "⚠️ 发现上次编译失败，强制覆盖缓存，重新触发编译！"
+          echo "force_trigger=true" >> $GITHUB_OUTPUT
+        else
+          echo "force_trigger=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: 保存新 Commit Hash
-      if: steps.cacheHash.outputs.cache-hit != 'true'
+      if: steps.cacheHash.outputs.cache-hit != 'true' || steps.checkBuild.outputs.force_trigger == 'true'
       run: |
         echo ${{ steps.getHash.outputs.commitHash }} > .commitHash
 
     - name: 触发编译工作流
-      if: steps.cacheHash.outputs.cache-hit != 'true'
+      if: steps.cacheHash.outputs.cache-hit != 'true' || steps.checkBuild.outputs.force_trigger == 'true'
       uses: peter-evans/repository-dispatch@v3
       with:
         token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
         event-type: Source Code Update
 
-    - name: 清理旧的 Workflow 运行记录
+    - name: 清理旧的更新检查器运行记录
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        echo "清理本检查器的历史记录..."
         runs=$(gh run list -w "${{ github.workflow }}" -R ${{ github.repository }} --limit 100 --json databaseId -q '.[].databaseId' | tail -n +4)
         if [ -n "$runs" ]; then
           for run in $runs; do
