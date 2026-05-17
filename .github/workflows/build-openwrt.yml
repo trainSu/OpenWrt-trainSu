@@ -115,6 +115,13 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-toolchain-
 
+    - name: 修复被缓存的底层构建时间戳
+      if: steps.cache-toolchain.outputs.cache-hit == 'true'
+      run: |
+        echo "正在施展时间戳欺骗魔法，骗过 OpenWrt 的 Make 系统..."
+        find openwrt/staging_dir/ -type f -exec touch {} \;
+        find openwrt/build_dir/ -type f -exec touch {} \;
+
     - name: 下载编译所需的软件包
       id: package
       run: |
