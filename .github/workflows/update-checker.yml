@@ -53,7 +53,7 @@ jobs:
         fi
 
     - name: 保存新 Commit Hash
-      if: steps.cacheHash.outputs.cache-hit != 'true'
+      if: steps.cacheHash.outputs.cache-hit != 'true' || steps.checkBuild.outputs.force_trigger == 'true'
       run: |
         echo ${{ steps.getHash.outputs.commitHash }} > .commitHash
 
