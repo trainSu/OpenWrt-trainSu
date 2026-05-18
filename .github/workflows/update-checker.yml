@@ -44,7 +44,6 @@ jobs:
       run: |
         last_status=$(gh run list -w "编译 OpenWrt 固件" -R ${{ github.repository }} --limit 1 --json conclusion -q '.[0].conclusion' || echo "unknown")
         echo "上次编译状态: $last_status"
-        
         if [ -n "$last_status" ] && [ "$last_status" != "success" ] && [ "$last_status" != "unknown" ]; then
           echo "⚠️ 发现上次编译失败，强制覆盖缓存，重新触发编译！"
           echo "force_trigger=true" >> $GITHUB_OUTPUT
