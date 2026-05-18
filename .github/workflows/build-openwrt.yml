@@ -112,7 +112,7 @@ jobs:
           openwrt/staging_dir/toolchain-*
           openwrt/build_dir/host*
           openwrt/build_dir/toolchain-*
-        key: ${{ runner.os }}-toolchain-${{ hashFiles('openwrt/.config', 'openwrt/include/**', 'openwrt/tools/**', 'openwrt/toolchain/**') }}
+        key: ${{ runner.os }}-toolchain-${{ hashFiles('openwrt/include/**', 'openwrt/tools/**', 'openwrt/toolchain/**') }}
         restore-keys: |
           ${{ runner.os }}-toolchain-
 
@@ -224,7 +224,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "开始清理旧的 Workflow 运行记录..."
-        runs=$(gh run list --limit 100 --json databaseId -q '.[].databaseId' | tail -n +4)
+        runs=$(gh run list -w "${{ github.workflow }}" --status completed --limit 100 --json databaseId -q '.[].databaseId' | tail -n +4)
         if [ -n "$runs" ]; then
           for run in $runs; do
             gh run delete "$run" || true
