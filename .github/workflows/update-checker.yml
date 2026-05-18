@@ -69,7 +69,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "清理本检查器的历史记录..."
-        runs=$(gh run list -w "${{ github.workflow }}" -R ${{ github.repository }} --limit 100 --json databaseId -q '.[].databaseId' | tail -n +4)
+        runs=$(gh run list -w "${{ github.workflow }}" --status completed -R ${{ github.repository }} --limit 100 --json databaseId -q '.[].databaseId' | tail -n +4)
         if [ -n "$runs" ]; then
           for run in $runs; do
             gh run delete "$run" -R ${{ github.repository }} || true
