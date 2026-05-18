@@ -152,7 +152,7 @@ jobs:
         KERNEL_VER=$(cat *.manifest | grep "^kernel" | head -n 1 | cut -d- -f2 | tr -d ' ')
         echo "KERNEL_VER=$KERNEL_VER" >> $GITHUB_ENV
         shopt -s extglob
-        rm -rf !(config.buildinfo|*.manifest|*squashfs-combined*.img.gz|*squashfs-combined-efi.img.gz)
+        rm -rf !(config.buildinfo|*.manifest|*squashfs-combined.img.gz|*squashfs-combined-efi.img.gz)
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
     - name: 上传固件到 Artifacts
