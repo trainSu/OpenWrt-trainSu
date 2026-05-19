@@ -156,8 +156,8 @@ jobs:
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
     - name: 上传固件到 Artifacts
-      uses: actions/upload-artifact@v4
       if: env.UPLOAD_FIRMWARE == 'true'
+      uses: actions/upload-artifact@v4
       with:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
@@ -204,10 +204,10 @@ jobs:
         EOF
 
     - name: 发布固件到 Releases
-      uses: softprops/action-gh-release@v2
       if: env.UPLOAD_RELEASE == 'true'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
