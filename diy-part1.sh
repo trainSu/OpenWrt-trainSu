@@ -13,4 +13,3 @@
 
 # honk
 sed -i '$a src-git honk https://github.com/kenzok8/openwrt-honk' feeds.conf.default
-sed -i '$a src-git small https://github.com/kenzok8/small' feeds.conf.default
