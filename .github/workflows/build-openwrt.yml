@@ -74,7 +74,7 @@ jobs:
       run: |
         curl -fsSL https://build-scripts.immortalwrt.org/init_build_environment.sh | sudo -E bash
         sudo timedatectl set-timezone "$TZ"
-        sudo chown $USER:$GROUPS $GITHUB_WORKSPACE
+        sudo chown -R "$USER:$(id -gn)" "$GITHUB_WORKSPACE"
 
     - name: 克隆 OpenWrt 源代码
       working-directory: ./
